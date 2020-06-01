@@ -42,6 +42,7 @@
       		<th>Descripción</th>
       		<th>Fecha inicial</th>
       		<th>Fecha final</th>
+          <th>Acción</th>
       	</tr>
       	@foreach($eventos as $evento)
       		<tr>
@@ -49,6 +50,7 @@
       			<td>{{$evento->descripcion}}</td>
       			<td>{{$evento->fecha_i}}</td>
       			<td>{{$evento->fecha_f}}</td>
+            <td><center><a href="{{asset('Evento/details')}}/{{$evento->id}}" class="btn btn-info"><i class="fas fa-eye"></i></a></center></td>
       		</tr>
       	@endforeach
       </table>

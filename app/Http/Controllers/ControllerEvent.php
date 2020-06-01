@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Event;
+use Auth;
 
 class ControllerEvent extends Controller
 {
@@ -55,6 +56,27 @@ class ControllerEvent extends Controller
 
    }
 
+   public function edit(Request $request){
+
+      // validacion
+     $this->validate($request, [
+     'titulo'     =>  'required',
+     'descripcion'  =>  'required',
+     'fecha' =>  'required',
+     'fecha_f' => 'required'
+    ]);
+
+    // guarda la base de datos
+    Event::where('id',$request->input('id_evento'))->update(array(
+      'titulo'=>$request->input("titulo"),"descripcion"=>$request->input("descripcion"),"color"=>$request->input("color"),"fecha_i"=>$request->input("fecha"),"fecha_f"=>$request->input("fecha_f")
+    ));
+
+     // devuelve el mensaje de exito
+     return back();
+
+   }
+
+
    public function details($id){
 
       // llamar evento por id
@@ -88,7 +110,7 @@ class ControllerEvent extends Controller
   public function dia(){
     $dia = date("Y-m-d");
     
-    $datanew = Event::where(["fecha_i"=>$dia])->get();
+    $datanew = Event::where(["fecha_i"=>$dia,"id_user"=>Auth::user()->id])->get();
 
     return view('evento/dia', [
       'eventos' => $datanew,
@@ -102,7 +124,7 @@ class ControllerEvent extends Controller
     $nuevafecha = strtotime ( '+4 day' , strtotime ( $dia ) ) ;
     $nuevafecha = date ( 'Y-m-d' , $nuevafecha );
     
-    $datanew = Event::whereBetween("fecha_i",array($dia, $nuevafecha))->get();
+    $datanew = Event::where("id_user",Auth::user()->id)->whereBetween("fecha_i",array($dia, $nuevafecha))->get();
 
     return view('evento/5dias', [
       'eventos' => $datanew,
@@ -172,7 +194,7 @@ class ControllerEvent extends Controller
            $datanew['fecha'] = $datafecha;
            //AGREGAR CONSULTAS EVENTO
            // consulta evento y filtra por fecha
-           $datanew['evento'] = Event::where(["fecha_i"=>$datafecha])->get();
+           $datanew['evento'] = Event::where(["fecha_i"=>$datafecha,"id_user"=>Auth::user()->id])->get();
            //var_dump($datanew['evento']);
            array_push($weekdata,$datanew);
          }
